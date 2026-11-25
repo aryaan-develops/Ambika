@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, use, useEffect, useState } from "react";
+import React, { Suspense, use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import confetti from "canvas-confetti";
@@ -20,41 +20,53 @@ import { WishComposerAndWall } from "@/components/WishComposerAndWall";
 function GuestInviteContent({ slug }: { slug: string }) {
   const searchParams = useSearchParams();
   const encoded = searchParams.get("e");
+  const queryInvite = useMemo(
+    () => (encoded ? decodeInvitePayload(encoded) : null),
+    [encoded]
+  );
 
-  const [invite, setInvite] = useState<InvitationData | null>(null);
+  const [localInvite, setLocalInvite] = useState<InvitationData | null>(null);
   const [wishes, setWishes] = useState<InviteWish[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const localInvite = loadInviteLocal(slug);
-    const queryInvite = encoded ? decodeInvitePayload(encoded) : null;
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      const stored = loadInviteLocal(slug);
+      const resolved =
+        stored?.coverImage?.startsWith("data:") ? stored : queryInvite ?? stored;
 
-    const resolved =
-      localInvite?.coverImage?.startsWith("data:")
-        ? localInvite
-        : queryInvite ?? localInvite;
+      if (resolved) {
+        saveInviteLocal(resolved);
+        confetti({
+          particleCount: 45,
+          spread: 70,
+          origin: { y: 0.35 },
+          colors: ["#E5A83B", "#22130C", "#F2B5A7", "#A7D3D4"],
+        });
+      }
 
-    if (resolved) {
-      saveInviteLocal(resolved);
-      setInvite(resolved);
-      confetti({
-        particleCount: 45,
-        spread: 70,
-        origin: { y: 0.35 },
-        colors: ["#E5A83B", "#22130C", "#F2B5A7", "#A7D3D4"],
-      });
-    }
+      setLocalInvite(stored);
+      setWishes(loadWishesLocal(slug));
+      setLoaded(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, [slug, queryInvite]);
 
-    setWishes(loadWishesLocal(slug));
-    setLoaded(true);
-  }, [slug, encoded]);
+  const invite =
+    localInvite?.coverImage?.startsWith("data:")
+      ? localInvite
+      : queryInvite ?? localInvite;
 
   const handleAddWish = (wish: InviteWish) => {
     const updated = saveWishLocal(slug, wish);
     setWishes(updated);
   };
 
-  if (!loaded) {
+  if (!loaded && !invite) {
     return (
       <div className="min-h-screen bg-[#FAF8F2] flex items-center justify-center p-6">
         <div className="w-8 h-8 rounded-full border-2 border-[#22130C] border-t-transparent animate-spin" />

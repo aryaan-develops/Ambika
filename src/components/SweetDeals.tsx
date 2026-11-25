@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Tag, Copy, Check, Percent } from "lucide-react";
+import { Copy, Check, Percent } from "lucide-react";
 
 export function SweetDeals() {
   const [copied, setCopied] = useState(false);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { BakeryItem, CartItem } from "@/types/bakery";
 
 interface CartContextType {
@@ -29,21 +29,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isReservationOpen, setIsReservationOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<BakeryItem | null>(null);
+  const hydratedRef = useRef(false);
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount without overwriting before hydration
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("ambika_cart");
-      if (saved) {
-        setItems(JSON.parse(saved));
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      try {
+        const saved = localStorage.getItem("ambika_cart");
+        if (saved) {
+          setItems(JSON.parse(saved));
+        }
+      } catch {
+        // LocalStorage fallback
+      } finally {
+        hydratedRef.current = true;
       }
-    } catch {
-      // LocalStorage fallback
-    }
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Save cart to localStorage on updates
   useEffect(() => {
+    if (!hydratedRef.current) return;
     try {
       localStorage.setItem("ambika_cart", JSON.stringify(items));
     } catch {

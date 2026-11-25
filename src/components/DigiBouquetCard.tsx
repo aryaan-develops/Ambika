@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Calendar, Clock, Heart, MapPin, Users } from "lucide-react";
 import { FlowerId, InvitationData, OCCASION_PRESETS } from "@/types/invite";
 import { formatInviteDate, formatInviteTime } from "@/lib/invite-storage";
@@ -34,6 +35,7 @@ export function DigiBouquetCard({
   const rightFlowers = flowers.slice(mid);
 
   const occasionMeta = OCCASION_PRESETS[invite.occasion];
+  const coverSrc = invite.coverImage || occasionMeta.image;
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -41,10 +43,13 @@ export function DigiBouquetCard({
       {invite.mode === "invite" && (
         <div className="mb-6 flex flex-col items-center text-center">
           <div className="relative w-52 h-52 sm:w-64 sm:h-64 rounded-2xl overflow-hidden border-[1.5px] border-[#22130C]/20 bg-[#FAF8F2] shadow-[4px_4px_0px_rgba(34,19,12,0.08)] mb-3.5">
-            <img
-              src={invite.coverImage || occasionMeta.image}
+            <Image
+              src={coverSrc}
               alt={occasionMeta.label}
-              className="w-full h-full object-cover"
+              fill
+              unoptimized={coverSrc.startsWith("data:")}
+              className="object-cover"
+              sizes="(max-width: 640px) 208px, 256px"
             />
           </div>
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#8C7366]">

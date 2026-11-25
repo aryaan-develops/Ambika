@@ -8,5 +8,6 @@ const Agentation = dynamic(
 );
 
 export function AgentationProvider() {
+  if (process.env.NODE_ENV !== "development") return null;
   return <Agentation />;
 }

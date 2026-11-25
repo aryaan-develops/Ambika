@@ -33,19 +33,23 @@ export function Hero() {
           />
         </div>
 
-        {/* Subtle top header gradient so navbar and headline remain ultra-crisp */}
-        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-black/60 via-black/20 to-transparent z-10" />
+        {/* Extended top gradient scrim so headline remains crisp over bright balloons */}
+        <div className="absolute top-0 left-0 right-0 h-64 sm:h-72 bg-gradient-to-b from-[#180C07]/80 via-[#180C07]/45 to-transparent z-10" />
       </div>
 
       {/* Main Headline placed in the open upper space above the children */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full pt-4 sm:pt-6">
         <div className="text-center max-w-4xl mx-auto">
           <h1
-            className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.15] font-serif drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]"
+            className="text-2xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.25] font-serif text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.95)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Unforgettable <span className="text-[#E5A83B]">Flavours</span>,{" "}
-            Fresh From Our Oven
+            Fresh{" "}
+            <span className="inline-block bg-[#22130C]/75 text-[#FFD166] px-3 py-0.5 rounded-2xl border border-[#E5A83B]/40 backdrop-blur-xs">
+              Cakes &amp; Sweets
+            </span>
+            <br />
+            Baked Daily for You
           </h1>
         </div>
       </div>
