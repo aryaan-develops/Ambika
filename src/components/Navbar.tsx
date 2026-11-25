@@ -2,12 +2,23 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, X, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Menu, X, Sparkles } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { SmileyWinkDoodle } from "@/components/SmileyWinkDoodle";
 
+const DOODLE_BALLOONS = [
+  { id: 1, fill: "#F28482", left: "8%", delay: 0.05, duration: 3.4, sway: 12, tilt: -8, size: 32 },
+  { id: 2, fill: "#E5A83B", left: "22%", delay: 0.25, duration: 3.8, sway: -14, tilt: 7, size: 36 },
+  { id: 3, fill: "#84DCC6", left: "38%", delay: 0.12, duration: 3.2, sway: 10, tilt: -5, size: 30 },
+  { id: 4, fill: "#7CC6FE", left: "54%", delay: 0.4, duration: 4.1, sway: -12, tilt: 9, size: 35 },
+  { id: 5, fill: "#FF9F68", left: "70%", delay: 0.18, duration: 3.6, sway: 15, tilt: -7, size: 33 },
+  { id: 6, fill: "#B5838D", left: "84%", delay: 0.5, duration: 3.9, sway: -10, tilt: 6, size: 31 },
+  { id: 7, fill: "#6BCB77", left: "15%", delay: 0.65, duration: 3.5, sway: 14, tilt: -6, size: 28 },
+];
+
 export function Navbar() {
-  const { setIsReservationOpen, setIsSearchOpen } = useCart();
+  const { setIsReservationOpen } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -51,6 +62,14 @@ export function Navbar() {
     };
   }, []);
 
+  const handleMobileSectionClick = (sectionId: string) => {
+    setMobileMenuOpen(false);
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <>
       {/* Invisible top sentinel for guaranteed 100% mobile scroll tracking */}
@@ -60,14 +79,16 @@ export function Navbar() {
         aria-hidden="true"
       />
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 will-change-transform ${
-          isScrolled || mobileMenuOpen
-            ? "bg-[#22130C]/95 backdrop-blur-md py-3 shadow-lg shadow-black/25"
-            : "bg-transparent py-4 sm:py-5"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          mobileMenuOpen
+            ? "bg-[#FAF5EE]/95 backdrop-blur-xl py-3 shadow-lg shadow-[#22130C]/10 md:bg-[#22130C]/95"
+            : isScrolled
+              ? "bg-[#22130C]/95 backdrop-blur-md py-3 shadow-lg shadow-black/25"
+              : "bg-transparent py-4 sm:py-5"
         }`}
         style={{
           WebkitBackdropFilter:
-            isScrolled || mobileMenuOpen ? "blur(12px)" : "none",
+            isScrolled || mobileMenuOpen ? "blur(16px)" : "none",
         }}
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -77,12 +98,17 @@ export function Navbar() {
           className="flex items-center gap-2 group cursor-pointer shrink-0"
         >
           <span
-            className="text-2xl sm:text-3xl font-bold tracking-tight text-white font-serif leading-none shrink-0"
+            className={`text-2xl sm:text-3xl font-bold tracking-tight font-serif leading-none shrink-0 transition-colors ${
+              mobileMenuOpen ? "text-[#22130C] md:text-white" : "text-white"
+            }`}
             style={{ fontFamily: "var(--font-display)" }}
           >
             Ambika
           </span>
-          <SmileyWinkDoodle className="transition-transform group-hover:scale-110 duration-200" />
+          <SmileyWinkDoodle
+            color={mobileMenuOpen ? "#22130C" : "#FFFFFF"}
+            className="transition-transform group-hover:scale-110 duration-200"
+          />
         </Link>
 
         {/* Desktop Nav Links */}
@@ -129,28 +155,26 @@ export function Navbar() {
 
         {/* Right Action Buttons */}
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Search Trigger */}
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            aria-label="Search bakery"
-            className="p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-          >
-            <Search className="w-5 h-5" />
-          </button>
-
           {/* Book A Cake CTA Button (Desktop only, mobile accesses via drawer) */}
           <button
+            type="button"
             onClick={() => setIsReservationOpen(true)}
-            className="hidden md:inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#E5A83B] text-[#22130C] font-semibold text-xs tracking-wider uppercase hover:bg-[#D49323] transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+            className="hidden md:inline-flex items-center justify-center px-5 py-2.5 rounded-full bg-[#E5A83B] text-[#22130C] font-semibold text-xs tracking-wider uppercase hover:bg-[#D49323] transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
           >
             Book a cake
           </button>
 
           {/* Mobile Menu Hamburger */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label="Toggle menu"
-            className="md:hidden p-2 text-stone-200 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            aria-expanded={mobileMenuOpen}
+            className={`md:hidden p-2 rounded-lg transition-colors cursor-pointer ${
+              mobileMenuOpen
+                ? "text-[#22130C] hover:bg-[#22130C]/10"
+                : "text-stone-200 hover:text-white hover:bg-white/10"
+            }`}
           >
             {mobileMenuOpen ? (
               <X className="w-6 h-6" />
@@ -161,67 +185,147 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Navigation */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-[#22130C] border-b border-white/10 px-6 py-6 space-y-4 animate-in slide-in-from-top duration-300">
-          <nav className="flex flex-col space-y-3 text-base font-medium text-stone-200">
-            <Link
-              href="#home"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1"
+      {/* Light Glassy Mobile Drawer + Floating Doodle Color Balloons */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.24, ease: "easeOut" }}
+            className="md:hidden relative overflow-hidden bg-[#FAF5EE]/95 backdrop-blur-xl border-b border-[#22130C]/10 px-6 pb-6 pt-3 space-y-4"
+          >
+            {/* Colorful Hand-Drawn Doodle Balloons Flying Up & Disappearing Off Top */}
+            <div
+              className="pointer-events-none absolute inset-0 overflow-hidden z-0"
+              aria-hidden="true"
             >
-              Home
-            </Link>
-            <Link
-              href="#creations"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1"
-            >
-              Products & Creations
-            </Link>
-            <Link
-              href="#story"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1"
-            >
-              About Ambika
-            </Link>
-            <Link
-              href="#menu"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1"
-            >
-              Crafted Menus
-            </Link>
-            <Link
-              href="#deals"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1 text-[#E5A83B]"
-            >
-              Special Deals (10% Off)
-            </Link>
-            <Link
-              href="#testimonials"
-              onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-[#E5A83B] transition-colors py-1"
-            >
-              Customer Reviews
-            </Link>
-          </nav>
-          <div className="pt-2 border-t border-white/10">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsReservationOpen(true);
-              }}
-              className="w-full py-3 rounded-full bg-[#E5A83B] text-[#22130C] font-semibold text-sm tracking-wider uppercase text-center hover:bg-[#D49323] transition-colors"
-            >
-              Book a cake
-            </button>
-          </div>
-        </div>
-      )}
+              {DOODLE_BALLOONS.map((b) => (
+                <motion.div
+                  key={b.id}
+                  initial={{ y: 310, opacity: 0, scale: 0.75, rotate: b.tilt }}
+                  animate={{
+                    y: -95,
+                    x: [0, b.sway, -b.sway * 0.55, 0],
+                    opacity: [0, 0.95, 0.95, 0],
+                    scale: [0.8, 1.05, 1, 0.9],
+                    rotate: [b.tilt, -b.tilt, b.tilt * 0.7],
+                  }}
+                  transition={{
+                    duration: b.duration,
+                    delay: b.delay,
+                    ease: "easeOut",
+                  }}
+                  style={{ left: b.left, width: b.size }}
+                  className="absolute top-0"
+                >
+                  <svg viewBox="0 0 36 58" fill="none" className="w-full h-auto">
+                    <path
+                      d="M18 3C10.5 3 5 9.2 5 17.5C5 26 12.2 33.8 18 35.5C23.8 33.8 31 26 31 17.5C31 9.2 25.5 3 18 3Z"
+                      fill={b.fill}
+                      stroke="#22130C"
+                      strokeWidth="1.9"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M11.5 11.5C12.2 8.8 14.5 7 17.2 6.8"
+                      stroke="#FFFFFF"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M16 36L20 36L18 39.5Z"
+                      fill={b.fill}
+                      stroke="#22130C"
+                      strokeWidth="1.6"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M18 39.5Q14.5 44.5 18.5 48.5Q22 52.5 17 56.5"
+                      stroke="#22130C"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                  </svg>
+                </motion.div>
+              ))}
+            </div>
+
+            <nav className="relative z-10 flex flex-col space-y-1 text-base font-semibold text-[#22130C]">
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("home")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors cursor-pointer"
+              >
+                Home
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("creations")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors cursor-pointer"
+              >
+                Products &amp; Creations
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("story")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors cursor-pointer"
+              >
+                About Ambika
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("menu")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors cursor-pointer"
+              >
+                Crafted Menus
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("deals")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors text-[#B56C2D] font-bold cursor-pointer"
+              >
+                Special Deals (10% Off)
+              </button>
+              <Link
+                href="/celebrate"
+                onClick={() => setMobileMenuOpen(false)}
+                className="hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors"
+              >
+                Bouquets &amp; Invites
+              </Link>
+              <button
+                type="button"
+                onClick={() => handleMobileSectionClick("testimonials")}
+                className="text-left hover:bg-[#E5A83B]/15 rounded-xl px-3 py-2 transition-colors cursor-pointer"
+              >
+                Customer Reviews
+              </button>
+            </nav>
+            <div className="relative z-10 pt-2 border-t border-[#22130C]/10">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsReservationOpen(true);
+                }}
+                className="w-full py-3 rounded-full bg-[#E5A83B] text-[#22130C] font-bold text-sm tracking-wider uppercase text-center hover:bg-[#D49323] shadow-sm transition-colors cursor-pointer"
+              >
+                Book a cake
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
+    {mobileMenuOpen && (
+      <div
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+        className="md:hidden fixed inset-0 bg-black/45 backdrop-blur-[2px] z-40"
+      />
+    )}
     </>
   );
 }

@@ -44,8 +44,8 @@ export function Hero() {
             className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.15] font-serif drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Freshly <span className="text-[#E5A83B]">Baked</span>{" "}
-            Goodness, Every Day
+            Unforgettable <span className="text-[#E5A83B]">Flavours</span>,{" "}
+            Fresh From Our Oven
           </h1>
         </div>
       </div>

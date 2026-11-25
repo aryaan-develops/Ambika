@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Flower2, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, Mail, Sparkles } from "lucide-react";
 import { BotanicalFlower } from "./BotanicalFlower";
 
 export function PartyInviteSection() {
@@ -22,10 +22,6 @@ export function PartyInviteSection() {
         >
           {/* Top Brand / Section Label */}
           <div className="text-center max-w-xl mx-auto mb-8 sm:mb-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 border border-[#22130C]/25 bg-white font-mono text-[11px] uppercase tracking-[0.18em] text-[#22130C] mb-3">
-              <Flower2 className="w-3.5 h-3.5 text-[#D49323]" />
-              <span>Ambika Digital Stationery</span>
-            </span>
             <h2
               className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#22130C] font-serif"
               style={{ fontFamily: "var(--font-display)" }}
