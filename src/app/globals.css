@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bakery-dark: #22130c;
+  --color-bakery-espresso: #180c07;
+  --color-bakery-cream: #faf5ee;
+  --color-bakery-warm: #fff9f3;
+  --color-bakery-card: #f7ede2;
+  --color-bakery-gold: #e5a83b;
+  --color-bakery-gold-hover: #d49323;
+  --color-bakery-cookie: #b56c2d;
+  --color-bakery-muted: #8c7366;
+  --color-pastel-mint: #e8f3eb;
+  --color-pastel-rose: #fdeee9;
+  --color-pastel-peach: #fef2e4;
+  --color-pastel-blue: #eaf3f8;
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+:root {
+  --background: #faf5ee;
+  --foreground: #22130c;
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom styled scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf5ee;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5a898;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8c7366;
+}
+
+/* Wavy divider helper */
+.wavy-curve {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation utilities */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 5s ease-in-out infinite 1.5s;
+}
+
+/* Rhythmic up-and-down tide surge & sway animation (15s speed, grounded base) */
+@keyframes curtainWaveMotion {
+  0% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+
+  25% {
+    transform: translate3d(-3%, 0, 0) scaleY(1.22);
+  }
+
+  50% {
+    transform: translate3d(-6%, 0, 0) scaleY(0.88);
+  }
+
+  75% {
+    transform: translate3d(-3%, 0, 0) scaleY(1.14);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) scaleY(1);
+  }
+}
