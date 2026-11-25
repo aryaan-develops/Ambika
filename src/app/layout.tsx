@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     "cupcakes",
     "gourmet sourdough",
   ],
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
